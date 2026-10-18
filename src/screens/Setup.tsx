@@ -5,15 +5,24 @@ import {
   DURATION_MAX,
   DURATION_MIN,
   DurationSchema,
+  QUESTION_COUNT_DEFAULT,
+  QUESTION_COUNT_MAX,
+  QUESTION_COUNT_MIN,
+  QuestionCountSchema,
   type Topic,
 } from '../../shared/schema';
-import { shuffle } from '../game/deck';
 import type { InputMode } from '../game/machine';
 import { requestInputMode } from '../lib/inputMode';
 import { unlockAudio } from '../lib/sound';
 import { fetchCategories, fetchTopics } from '../lib/supabase';
 
-export type StartParams = { deck: Topic[]; durationSec: number; inputMode: InputMode };
+/** pool はカテゴリの全お題。App が questionCount 件を選んでデッキにする（もう一度のたびに選び直す） */
+export type StartParams = {
+  pool: Topic[];
+  questionCount: number;
+  durationSec: number;
+  inputMode: InputMode;
+};
 
 type CategoriesLoad =
   | { status: 'loading' }
@@ -33,6 +42,7 @@ export function Setup({ onStart }: { onStart: (params: StartParams) => void }) {
   const [load, setLoad] = useState<CategoriesLoad>({ status: 'loading' });
   const [selected, setSelected] = useState<number | null>(null);
   const [duration, setDuration] = useState(String(DURATION_DEFAULT));
+  const [questionCount, setQuestionCount] = useState(String(QUESTION_COUNT_DEFAULT));
   const [error, setError] = useState<string | null>(null);
   const [starting, setStarting] = useState(false);
 
@@ -53,6 +63,9 @@ export function Setup({ onStart }: { onStart: (params: StartParams) => void }) {
     const parsed = DurationSchema.safeParse(duration);
     if (!parsed.success)
       return setError(parsed.error.issues[0]?.message ?? '秒数が正しくありません');
+    const count = QuestionCountSchema.safeParse(questionCount);
+    if (!count.success)
+      return setError(count.error.issues[0]?.message ?? '問題数が正しくありません');
     if (selected === null) return setError('カテゴリを選んでください');
 
     // どちらもクリック処理の中で、await より前に呼ぶ必要がある（iOS）
@@ -67,7 +80,12 @@ export function Setup({ onStart }: { onStart: (params: StartParams) => void }) {
           setStarting(false);
           return setError('このカテゴリにはまだお題がありません');
         }
-        onStart({ deck: shuffle(topics), durationSec: parsed.data, inputMode: mode });
+        onStart({
+          pool: topics,
+          questionCount: count.data,
+          durationSec: parsed.data,
+          inputMode: mode,
+        });
       },
       () => {
         setStarting(false);
@@ -106,6 +124,28 @@ export function Setup({ onStart }: { onStart: (params: StartParams) => void }) {
             />
             <span className="text-lg">
               秒（{DURATION_MIN}〜{DURATION_MAX}）
+            </span>
+          </div>
+        </section>
+
+        <section>
+          <label htmlFor="question-count" className="mb-3 block text-white/80">
+            何問にする？
+          </label>
+          <div className="flex items-center gap-2">
+            <input
+              id="question-count"
+              type="number"
+              inputMode="numeric"
+              min={QUESTION_COUNT_MIN}
+              max={QUESTION_COUNT_MAX}
+              step={1}
+              value={questionCount}
+              onChange={(e) => setQuestionCount(e.target.value)}
+              className="w-28 rounded-md bg-white px-4 py-3 text-2xl font-bold text-sky-900"
+            />
+            <span className="text-lg">
+              問（{QUESTION_COUNT_MIN}〜{QUESTION_COUNT_MAX}）
             </span>
           </div>
         </section>

@@ -17,3 +17,16 @@ export const DurationSchema = z.coerce
   .int({ error: DURATION_MESSAGE })
   .min(DURATION_MIN, { error: DURATION_MESSAGE })
   .max(DURATION_MAX, { error: DURATION_MESSAGE });
+
+export const QUESTION_COUNT_MIN = 1;
+export const QUESTION_COUNT_MAX = 50;
+export const QUESTION_COUNT_DEFAULT = 8;
+
+const QUESTION_COUNT_MESSAGE = `問題数は${QUESTION_COUNT_MIN}〜${QUESTION_COUNT_MAX}の整数で入力してください`;
+
+/** 入力欄の文字列を問題数に変換する。カテゴリのお題がこれより少なければ、あるだけ出す */
+export const QuestionCountSchema = z.coerce
+  .number({ error: QUESTION_COUNT_MESSAGE })
+  .int({ error: QUESTION_COUNT_MESSAGE })
+  .min(QUESTION_COUNT_MIN, { error: QUESTION_COUNT_MESSAGE })
+  .max(QUESTION_COUNT_MAX, { error: QUESTION_COUNT_MESSAGE });

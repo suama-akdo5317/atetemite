@@ -156,13 +156,13 @@ type GameState =
 
 | 現在の状態 | イベント | 遷移先・処理 |
 |---|---|---|
-| setup | `START {deck, durationSec, inputMode}` | countdown（`deck` は呼び出し側でシャッフル済みのものを渡す） |
+| setup | `START {deck, durationSec, inputMode}` | countdown（`deck` は呼び出し側が `drawDeck(全お題, 問題数)` で選んだもの。FR-12） |
 | countdown | `COUNTDOWN_DONE {now}` | playing（`endsAt = now + durationSec * 1000`） |
 | playing | `ANSWER {outcome}` | 回答を記録し、`feedback` を立てる。`feedback` が立っている間は無視する |
 | playing | `NEXT` | `index + 1` にして `feedback` を消す。お題を出し切っていたら result（FR-08） |
 | playing | `TIME_UP` | result（表示中だったお題は結果に含めない） |
 | playing | `FALLBACK_TO_TAP` | `inputMode` を `tap` にする（3.3 の3） |
-| result | `RETRY {deck, inputMode}` | countdown（呼び出し側が同じお題をシャッフルし直し、入力方法も 3.3 の手順で判定し直して渡す。DB は読み直さない） |
+| result | `RETRY {deck, inputMode}` | countdown（App が覚えている全お題から問題数ぶん選び直し、入力方法も 3.3 の手順で判定し直して渡す。DB は読み直さない） |
 | result | `BACK` | setup |
 
 上の表にない組み合わせ（例: setup での `ANSWER`）は、状態を変えずにそのまま返す。
@@ -182,7 +182,7 @@ type GameState =
 
 | 画面 | 内容 |
 |---|---|
-| Setup | カテゴリのボタン一覧、秒数の入力欄（10〜300、Zod で検証。FR-02）、スタートボタン。読み込み中の表示、エラー時の再試行ボタン（FR-11）。「横向きにしておでこへ」の案内 |
+| Setup | カテゴリのボタン一覧、秒数の入力欄（10〜300、Zod で検証。FR-02）、問題数の入力欄（1〜50、初期値8。FR-12）、スタートボタン。読み込み中の表示、エラー時の再試行ボタン（FR-11）。「横向きにしておでこへ」の案内 |
 | Countdown | 画面いっぱいに「3・2・1」（FR-03） |
 | Play | お題を最大サイズで表示、残り時間（FR-07）。正解は緑、パスは赤で画面をフラッシュし、約0.5秒後に `NEXT`。画面の右半分のタップで正解、左半分でパス（`inputMode` によらず常に有効。実機で試した結果、傾き操作中もタップしたいという要望があったため） |
 | Result | 正解数、お題ごとの ✓／パスの一覧、「もう一度」と「カテゴリ選択に戻る」（FR-10） |

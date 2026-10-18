@@ -164,6 +164,22 @@ test('縦長の画面では90度回転して横向きで表示する（NFR-04）
   await expect(topicText(page)).toHaveText('正解！');
 });
 
+test('指定した問題数を出し切ると結果画面になる', async ({ page }) => {
+  await page.clock.install();
+  await page.goto('/');
+  await page.getByRole('button', { name: '動物' }).click();
+  await page.getByLabel('何問にする？').fill('2');
+  await page.getByRole('button', { name: 'スタート' }).click();
+  await advance(page, COUNTDOWN_MS + SENSOR_TIMEOUT_MS);
+
+  for (let i = 0; i < 2; i++) {
+    await page.getByRole('button', { name: '正解 →' }).click();
+    await advance(page, FEEDBACK_MS);
+  }
+  await expect(page.getByText('2問正解')).toBeVisible();
+  await expect(page.getByRole('listitem')).toHaveCount(2);
+});
+
 test('カテゴリを読み込めないときは再試行できる（FR-11）', async ({ page }) => {
   await page.route('**/rest/v1/categories*', (route) => route.abort());
   await page.goto('/');

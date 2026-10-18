@@ -7,3 +7,8 @@ export function shuffle<T>(items: readonly T[], random: () => number = Math.rand
   }
   return result;
 }
+
+/** お題全体からランダムに count 件選ぶ。足りなければあるだけ返す */
+export function drawDeck<T>(pool: readonly T[], count: number): T[] {
+  return shuffle(pool).slice(0, count);
+}
