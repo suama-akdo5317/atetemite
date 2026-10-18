@@ -16,7 +16,7 @@ export function Countdown({ onDone }: { onDone: (now: number) => void }) {
   }, [count]);
 
   return (
-    <LandscapeStage className="flex flex-col items-center justify-center gap-[4cqh] bg-black text-white">
+    <LandscapeStage className="flex flex-col items-center justify-center gap-[4cqh] bg-sky-600 text-white">
       <p className="font-title text-[9cqh]">おでこにかざして！</p>
       <p
         data-testid="countdown"
