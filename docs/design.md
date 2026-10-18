@@ -192,7 +192,7 @@ type GameState =
   - 文字サイズは `cqw`/`cqh`（`landscape-stage` を `container-type: size` にしている）で指定する。`vw`/`vh` は回転すると縦横の基準がずれる。
   - 傾き判定（4章）は画面の法線の向きだけを見ているので、回転の影響を受けない。
 - Wake Lock: Countdown に入るときに取得し、Result に入るときに解放する。対応していない端末では何もしない（NFR-03）。
-- 効果音と振動（FR-09）: 正解、パス、残り5秒、終了の4つ。効果音は Web Audio API で鳴らす。iOS では最初のユーザー操作の中で AudioContext を開始する必要があるので、スタートボタンを押した処理の中で開始する。振動は `navigator.vibrate` が使える端末でだけ行う。
+- 効果音と振動（FR-09）: 正解、パス、残り5秒、終了の4つ。効果音は Web Audio API で鳴らす。iOS では最初のユーザー操作の中で AudioContext を開始する必要があるので、スタートボタンを押した処理の中で開始する。あわせて `navigator.audioSession.type = 'playback'` を設定し、消音スイッチがオンでも鳴らす（対応していないブラウザでは何もしない）。振動は `navigator.vibrate` が使える端末でだけ行う。
 
 ## 4. 傾き判定
 

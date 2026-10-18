@@ -24,8 +24,13 @@ const VIBRATIONS: Record<SoundKind, number | number[]> = {
 
 let ctx: AudioContext | undefined;
 
+type AudioSessionNavigator = Navigator & { audioSession?: { type: string } };
+
 /** iOS はユーザー操作の中で AudioContext を開始しないと音が出ないため、スタート時に呼ぶ */
 export function unlockAudio(): void {
+  // iOS Safari: 'playback' にすると消音スイッチがオンでも鳴る。AudioContext を作る前に設定する
+  const session = (navigator as AudioSessionNavigator).audioSession;
+  if (session) session.type = 'playback';
   ctx ??= new AudioContext();
   void ctx.resume();
 }
