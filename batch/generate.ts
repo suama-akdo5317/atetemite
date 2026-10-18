@@ -15,7 +15,7 @@ import {
 const EnvSchema = z.object({
   SUPABASE_URL: z.url(),
   SUPABASE_SECRET_KEY: z.string().min(1),
-  ANTHROPIC_API_KEY: z.string().min(1),
+  LLM_API_KEY: z.string().min(1),
   LLM_MODEL: z.string().min(1).default('claude-haiku-5-5'),
 });
 
@@ -48,10 +48,7 @@ async function main(): Promise<number> {
   const db = createClient<Database>(env.SUPABASE_URL, env.SUPABASE_SECRET_KEY, {
     auth: { persistSession: false },
   });
-  const generate = anthropicGenerator(
-    new Anthropic({ apiKey: env.ANTHROPIC_API_KEY }),
-    env.LLM_MODEL,
-  );
+  const generate = anthropicGenerator(new Anthropic({ apiKey: env.LLM_API_KEY }), env.LLM_MODEL);
   const deps = { db, generate, model: env.LLM_MODEL };
 
   const slugs = opts.category ? [opts.category] : await listPublishedSlugs(db);

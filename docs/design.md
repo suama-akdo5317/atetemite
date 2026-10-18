@@ -62,7 +62,7 @@ atetemite/
 | `VITE_SUPABASE_PUBLISHABLE_KEY` | ゲーム | `sb_publishable_…` |
 | `SUPABASE_URL` | バッチ | Supabase の URL |
 | `SUPABASE_SECRET_KEY` | バッチ | `sb_secret_…` |
-| `ANTHROPIC_API_KEY` | バッチ | |
+| `LLM_API_KEY` | バッチ | LLM の API キー。サービスに依存しない名前にしている（現在の実装は Anthropic） |
 | `LLM_MODEL` | バッチ | 省略時は `claude-haiku-5-5`（FR-26） |
 
 バッチ用の変数には `VITE_` を付けない。Vite は `VITE_` で始まる変数しかクライアントに埋め込まないので、秘密情報がゲームに混ざらない（NFR-07）。
