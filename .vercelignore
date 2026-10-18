@@ -1,0 +1,14 @@
+# 秘密情報とローカル専用のもの（.env.local がビルドに混ざると接続先が 127.0.0.1 になる）
+.env
+.env.*
+!.env.example
+.secrets
+.tmp
+supabase
+batch
+e2e
+test-results
+playwright-report
+coverage
+node_modules
+dist
