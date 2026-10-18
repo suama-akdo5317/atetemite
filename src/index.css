@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+/*
+ * タイトルとカウントダウンの見出し用の書体。fontsource の全範囲 CSS（110kB）は読み込まず、タイトルの文字を含む分割ファイルだけを指す。
+ * ponytail: ファイル番号は @fontsource/dela-gothic-one 5.3.0 の分割に依存する。表示する文字を変えたり
+ * パッケージを更新したりしたら、番号と unicode-range を確認し直す
+ */
+@font-face {
+  font-family: "Dela Gothic One";
+  font-display: swap;
+  src: url("@fontsource/dela-gothic-one/files/dela-gothic-one-119-400-normal.woff2") format("woff2");
+  /* タイトル「あててミテ！」とカウントダウン「おでこにかざして！」の文字 */
+  unicode-range:
+    U+3042, U+3066, U+30C6, U+30DF, U+304A, U+3067, U+3053, U+306B, U+304B, U+3056, U+3057;
+}
+
+@font-face {
+  font-family: "Dela Gothic One";
+  font-display: swap;
+  src: url("@fontsource/dela-gothic-one/files/dela-gothic-one-117-400-normal.woff2") format("woff2");
+  unicode-range: U+FF01; /* ！ */
+}
+
+@font-face {
+  font-family: "Dela Gothic One";
+  font-display: swap;
+  src: url("@fontsource/dela-gothic-one/files/dela-gothic-one-118-400-normal.woff2") format("woff2");
+  unicode-range: U+0030-0039; /* 0〜9（結果画面の正解数） */
+}
+
+@theme {
+  --font-title: "Dela Gothic One", sans-serif;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  @apply bg-white text-black antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+  /* ダブルタップでの拡大を防ぐ（タップ操作で連打するため） */
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.landscape-stage {
+  position: fixed;
+  inset: 0;
+  container-type: size;
+}
+
+/*
+ * 縦向き（向きロック中のスマホ、PC の縦長ウィンドウ）は舞台ごと右に 90 度回す。
+ * ponytail: 回転方向は固定（スマホの右側面が上）。逆向きに持つと上下逆になる。
+ * 困ったら deviceorientation の gamma の符号で回転方向を選ぶ
+ */
+@media (orientation: portrait) {
+  .landscape-stage {
+    inset: 0 auto auto 0;
+    width: 100dvh;
+    height: 100dvw;
+    transform-origin: top left;
+    transform: rotate(90deg) translateY(-100%);
+  }
+}
